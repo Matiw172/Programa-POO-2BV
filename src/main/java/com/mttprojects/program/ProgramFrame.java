@@ -172,10 +172,10 @@ public class ProgramFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_CopyBTActionPerformed
 
     private void PasteBTActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_PasteBTActionPerformed
-        /*CollisionEx spaceGame = new CollisionEx();
-        this.add(spaceGame);
-        deskPanel.add(spaceGame);
-        spaceGame.setVisible(true);*/
+        Tamagotchi tamachotchiGame = new Tamagotchi();
+        this.add(tamachotchiGame);
+        deskPanel.add(tamachotchiGame);
+        tamachotchiGame.setVisible(true);
     }//GEN-LAST:event_PasteBTActionPerformed
 
     /**

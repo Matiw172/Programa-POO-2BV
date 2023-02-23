@@ -24,8 +24,8 @@ public class MineSweeper extends javax.swing.JInternalFrame {
     int CANVAS_HEIGHT = CELL_SIZE * ROWS;
 
     mineCell cells[][] = new mineCell[ROWS][COLS];
-    ArrayList<mineCell> cellsList = new ArrayList<mineCell>();
-    ArrayList<mineCell> realCellsList = new ArrayList<mineCell>();
+    ArrayList<mineCell> cellsList = new ArrayList<>();
+    ArrayList<mineCell> realCellsList = new ArrayList<>();
     int MINES = 50;
     int preMines = 50;
     int DIFFICULTY = 1;
@@ -38,6 +38,7 @@ public class MineSweeper extends javax.swing.JInternalFrame {
     boolean minesPlaced = false;
 
     ActionListener mineLeftListener = new ActionListener() {
+        @Override
         public void actionPerformed(ActionEvent e) {
 
             mineCell button = (mineCell) e.getSource();
@@ -51,18 +52,17 @@ public class MineSweeper extends javax.swing.JInternalFrame {
                     timer.start();
                 }
 
-                if (button.isMined && !button.isFlagged) {
+                if (button.isMine && !button.isFlag) {
                     GameOver(button);
-                } else if (!button.isFlagged) {
-                    String value = button.getText();
-                    printLog("Click value: " + value);
-                    revealCell(button.row, button.col);
+                } else if (!button.isFlag) {
+                    revealCell(button.X, button.Y);
                 }
             }
         }
     };
 
     MouseListener mineRightListener = new MouseAdapter() {
+        @Override
         public void mouseClicked(MouseEvent e) {
             if (SwingUtilities.isRightMouseButton(e)) {
                 if (!GAMEWON) {
@@ -71,18 +71,18 @@ public class MineSweeper extends javax.swing.JInternalFrame {
                     }
 
                     mineCell button = (mineCell) e.getSource();
-                    if (!button.isRevealed) {
+                    if (!button.isReveal) {
 
-                        if (button.isFlagged) {
-                            button.isFlagged = false;
+                        if (button.isFlag) {
+                            button.isFlag = false;
                             FlagsLeft++;
-                            if (button.isMined) {
+                            if (button.isMine) {
                                 minesLeft++;
                             }
                         } else if (FlagsLeft > 0) {
-                            button.isFlagged = true;
+                            button.isFlag = true;
                             FlagsLeft--;
-                            if (button.isMined) {
+                            if (button.isMine) {
                                 minesLeft--;
                             }
                         }
@@ -125,11 +125,11 @@ public class MineSweeper extends javax.swing.JInternalFrame {
 
                 mineCell myMine = realCellsList.get(i);
 
-                if (myMine.isMined) {
+                if (myMine.isMine) {
                     myMine.paintCell(Color.GREEN);
-                    printLog("Paint mine in " + myMine.row + "|" + myMine.col);
+                    printLog("Paint mine in " + myMine.X + "|" + myMine.Y);
                 } else {
-                    myMine.isRevealed = true;
+                    myMine.isReveal = true;
                     myMine.paint();
                 }
             }
@@ -147,11 +147,11 @@ public class MineSweeper extends javax.swing.JInternalFrame {
 
             mineCell myMine = realCellsList.get(i);
 
-            if (myMine.isMined) {
+            if (myMine.isMine) {
                 myMine.paintCell(Color.RED);
-                printLog("Paint mine in " + myMine.row + "|" + myMine.col);
+                printLog("Paint mine in " + myMine.X + "|" + myMine.Y);
             } else {
-                myMine.isRevealed = true;
+                myMine.isReveal = true;
                 myMine.paint();
             }
         }
@@ -162,7 +162,7 @@ public class MineSweeper extends javax.swing.JInternalFrame {
     }
 
     public void GenerateGrid() {
-        CANVAS_WIDTH = CELL_SIZE * COLS; // Game board width/height
+        CANVAS_WIDTH = CELL_SIZE * COLS; 
         CANVAS_HEIGHT = CELL_SIZE * ROWS;
 
         realCellsList = new ArrayList<mineCell>();
@@ -174,9 +174,8 @@ public class MineSweeper extends javax.swing.JInternalFrame {
         gamePanel.repaint();
 
         printLog("Genering Panel");
-        gamePanel.setLayout(new GridLayout(ROWS, COLS, 1, 1));  // JPanel
+        gamePanel.setLayout(new GridLayout(ROWS, COLS, 1, 1)); 
 
-        // Allocate the 2D array of Cell, and added into content-pane.
         for (int row = 0; row < ROWS; ++row) {
             for (int col = 0; col < COLS; ++col) {
                 mineCell myMine = new mineCell(row, col);
@@ -193,9 +192,9 @@ public class MineSweeper extends javax.swing.JInternalFrame {
         gamePanel.setMinimumSize(gridSize);
         gamePanel.setMaximumSize(gridSize);
 
-        for (int i = 0; i < cellsList.size(); i++) {
-            cellsList.get(i).addActionListener(mineLeftListener);
-            cellsList.get(i).addMouseListener(mineRightListener);
+        for (int i = 0; i < realCellsList.size(); i++) {
+            realCellsList.get(i).addActionListener(mineLeftListener);
+            realCellsList.get(i).addMouseListener(mineRightListener);
         }
 
         Dimension windowSize = new Dimension(CANVAS_WIDTH + CELL_SIZE / 2, CANVAS_HEIGHT + 100 + CELL_SIZE / 2);
@@ -209,8 +208,6 @@ public class MineSweeper extends javax.swing.JInternalFrame {
     }
 
     private void centerFrame() {
-        // Obtener el JDesktopPane que contiene el JInternalFrame
-        // Obtener el tamaño del JDesktopPane
         Dimension desktopSize = parent.getSize();
         Dimension jInternalFrameSize = this.getSize();
         this.setLocation((desktopSize.width - jInternalFrameSize.width) / 2,
@@ -223,7 +220,7 @@ public class MineSweeper extends javax.swing.JInternalFrame {
         while (MINES > 0) {
             int r = randomRangeInt(0, cellsList.size() - 1);
             mineCell myMine = cellsList.get(r);
-            myMine.isMined = true;
+            myMine.isMine = true;
             cellsList.remove(myMine);
             MINES--;
         }
@@ -233,9 +230,8 @@ public class MineSweeper extends javax.swing.JInternalFrame {
         int numMines = 0;
         for (int i = Row - 1; i <= Row + 1; i++) {
             for (int j = Col - 1; j <= Col + 1; j++) {
-                // Need to ensure valid row and column numbers too
                 if (i >= 0 && i < ROWS && j >= 0 && j < COLS) {
-                    if (cells[i][j].isMined) {
+                    if (cells[i][j].isMine) {
                         numMines++;
                     }
                 }
@@ -244,16 +240,16 @@ public class MineSweeper extends javax.swing.JInternalFrame {
         return numMines;
     }
 
-    private void revealCell(int Row, int Col) {
+    private void revealCell(int Row, int Col) { //Codigo recursivo para celdas adyacentes 
         int numMines = getSurroundingMines(Row, Col);
         cells[Row][Col].setText(numMines + "");
-        cells[Row][Col].isRevealed = true;
+        cells[Row][Col].isReveal = true;
         cells[Row][Col].paint();
         if (numMines == 0) {
             for (int i = Row - 1; i <= Row + 1; i++) {
                 for (int j = Col - 1; j <= Col + 1; j++) {
                     if (i >= 0 && i < ROWS && j >= 0 && j < COLS) {
-                        if (!cells[i][j].isRevealed) {
+                        if (!cells[i][j].isReveal) {
                             revealCell(i, j);
                         }
                     }
