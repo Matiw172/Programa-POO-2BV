@@ -5,8 +5,14 @@
 package utils;
 
 import java.awt.Color;
+import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Random;
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
@@ -24,10 +30,17 @@ public class ToolsClass {
         System.out.println(text);
     }
     
-    public static ImageIcon getImage(String fileName)
+    public static ImageIcon getImageFile(String fileName)
     {
         return new ImageIcon("src/main/java/Images/" + fileName);
     }
+    
+    public static BufferedImage getBufImage(String fileName) throws IOException
+    {
+        BufferedImage buf  = ImageIO.read(new File(fileName));
+        return buf;
+    }
+    
     
     public static ImageIcon getImageScaled(String fileName, int width, int height)
     {
@@ -36,6 +49,15 @@ public class ToolsClass {
         Image scaledImage = image.getScaledInstance(width, height, Image.SCALE_FAST);
         ImageIcon scaledIcon = new ImageIcon(scaledImage);
         return scaledIcon;
+    }
+    
+    public static ImageIcon setIconScale(ImageIcon icon, int width, int height)
+    {
+        Image image = icon.getImage();
+        Image scaledImage = image.getScaledInstance(width, height, Image.SCALE_FAST);
+        ImageIcon scaledIcon = new ImageIcon(scaledImage);
+        return scaledIcon;
+        
     }
     
     public static void SetDarkMode(javax.swing.JFrame frame)
@@ -71,6 +93,18 @@ public class ToolsClass {
     public static void showMessage(String message)
     {
         JOptionPane.showMessageDialog(null, message);
+    }
+   public static <T extends Number> T clamp(T value, T minimum, T maximum) {
+        if (minimum.doubleValue() > maximum.doubleValue()) {
+            T temp = minimum;
+            minimum = maximum;
+            maximum = temp;
+        }
+        if (value.doubleValue() > maximum.doubleValue())
+            value = maximum;
+        if (value.doubleValue() < minimum.doubleValue())
+            value = minimum;
+        return value;
     }
     
     public static int messageGetInt(String message)
@@ -119,5 +153,46 @@ public class ToolsClass {
     } catch (UnsupportedLookAndFeelException exc) {
         System.err.println("Nimbus: Unsupported Look and feel!");
     }
+    }
+    
+    public static ImageIcon[][] parseSpriteSheet(String image, int width, int height, int rows, int cols, int scale)
+    {
+        ImageIcon[][] ret = new ImageIcon[rows+1][cols+1];;
+        
+        ImageIcon icon = getImageFile(image);
+        Image myimage = icon.getImage();
+        BufferedImage bigImg = imageIconToBufferedImage(icon);
+        
+        // The above line throws an checked IOException which must be caught.
+       
+        BufferedImage[][] sprites = new BufferedImage[rows+1][cols+1];
+
+        for (int i = 0; i <= rows; i++)
+        {
+            for (int j = 0; j <= cols; j++)
+            {
+                sprites[i][j] = bigImg.getSubimage(
+                    j * width,
+                    i * height,
+                    width,
+                    height
+                );
+                
+                ret[i][j] = setIconScale(new ImageIcon(sprites[i][j]),width*scale,height*scale);
+                
+            }
+        }      
+        
+        return ret;
+        
+    }
+    
+    public static BufferedImage imageIconToBufferedImage(ImageIcon icon) {
+        BufferedImage bufferedImage = new BufferedImage(icon.getIconWidth(), icon.getIconHeight(),
+                BufferedImage.TYPE_INT_ARGB);
+        Graphics graphics = bufferedImage.createGraphics();
+        icon.paintIcon(null, graphics, 0, 0);
+        graphics.dispose();//from   w  ww.j a  va  2  s.  co m
+        return bufferedImage;
     }
 }
