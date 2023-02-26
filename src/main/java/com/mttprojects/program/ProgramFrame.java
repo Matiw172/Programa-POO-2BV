@@ -120,7 +120,7 @@ public class ProgramFrame extends javax.swing.JFrame {
         jMenu2.add(CopyBT);
 
         PasteBT.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_V, java.awt.event.InputEvent.CTRL_DOWN_MASK));
-        PasteBT.setText("SpaceShip");
+        PasteBT.setText("Tamagotchi");
         PasteBT.setToolTipText("");
         PasteBT.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {

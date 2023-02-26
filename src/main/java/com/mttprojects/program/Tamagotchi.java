@@ -38,6 +38,7 @@ public class Tamagotchi extends javax.swing.JInternalFrame {
     LineBorder noBorder = new LineBorder(Color.WHITE, 1);
     LineBorder chooseBorder = new LineBorder(Color.BLACK, 2);
     LineBorder warningBorder = new LineBorder(Color.RED, 4);
+    LineBorder warningSelected = new LineBorder(new Color(92, 0, 0), 2);
     LineBorder doingBorder = new LineBorder(Color.GREEN, 4);
 
     /**
@@ -198,7 +199,11 @@ public class Tamagotchi extends javax.swing.JInternalFrame {
             for (JLabel option : options) {
                 option.setBorder(noBorder);
             }
+            
+            if(bars.get(op).getValue() >25)
             options.get(op).setBorder(chooseBorder);
+            else
+                options.get(op).setBorder(warningSelected);
         }
     }
 
@@ -226,8 +231,11 @@ public class Tamagotchi extends javax.swing.JInternalFrame {
                         break;
                 }
             } else {
-                options.get(currentOption).setBorder(noBorder);
-
+                /*
+                if(bars.get(currentOption).getValue() > 25)
+                    options.get(currentOption).setBorder(noBorder);
+                else
+                    options.get(currentOption).setBorder(warningSelected);*/
                 doTimer = -1;
             }
         }
@@ -245,16 +253,19 @@ public class Tamagotchi extends javax.swing.JInternalFrame {
             JProgressBar mybar = bars.get(i);
 
             if (doTimer > 0) {
-                options.get(i).setBorder(noBorder);
+                //options.get(i).setBorder(noBorder);
                 options.get(currentOption).setBorder(doingBorder);
-            } else {
-                options.get(i).setBorder(noBorder);
+            }
+            else if (mybar.getValue() >= 25){
                 options.get(currentOption).setBorder(chooseBorder);
             }
-
-            if (mybar.getValue() < 25 && currentOption != i) {
+            
+            
+            if (mybar.getValue() < 25) {
                 options.get(i).setBorder(warningBorder);
             }
+
+            
 
             if (Pet != null) {
 
@@ -292,6 +303,10 @@ public class Tamagotchi extends javax.swing.JInternalFrame {
                 printLog("NO PET!");
             }
         }
+        
+        if (bars.get(currentOption).getValue() < 25 && doTimer <= 0) {
+                options.get(currentOption).setBorder(warningSelected);
+            }
     }
 
     /**
