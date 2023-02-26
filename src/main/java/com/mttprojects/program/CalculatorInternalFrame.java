@@ -18,8 +18,8 @@ public class CalculatorInternalFrame extends javax.swing.JInternalFrame {
 
     ArrayList<String> history = new ArrayList<String>();
     String history2 = "";
-    double currentValue = Math.PI;
-    double preValue = Math.PI;
+    float currentValue = 0;
+    float preValue = 0;
     String valueOnScreen = "";
     boolean ShowResult = false;
     boolean hasDot = false;
@@ -49,27 +49,34 @@ public class CalculatorInternalFrame extends javax.swing.JInternalFrame {
                 String value = button.getText();
 
                 printLog("Click Operator: " + value);
-                if (ShowResult) {
+                if(ShowResult)
+                {
                     history2 = "";
                 }
-                /*if (valueOnScreen == "" && value == "-") {
-                        valueOnScreen += "-";
+                if (!getNewVal) {
+                    
+                    
+                    history.add(CheckValues());
+                    history.add(value);
+                    history2 += CheckValues();
+                    history2 += value;
+
+                    valueOnScreen = calculate() + "";
+                    valueOnScreen = CheckValues();
+                    updateScreen();
+                    getNewVal = true;
+                    TXT_history.setText(history2);
+                    lastOperation = value;
+                }
+                else
+                {
+                    if(value == "-")
+                    {
+                       
+                        valueOnScreen = "-";
                         updateScreen();
                         getNewVal = false;
-                    } else */
-                if (!getNewVal) {
-                    {
-                        calculate();
-                        lastOperation = value;
-                        history.add(CheckValues());
-                        history.add(value);
-                        history2 += CheckValues();
-                        history2 += value;
-                        valueOnScreen = "";
-                        //valueOnScreen = CheckValues();
-                        updateScreen();
-                        getNewVal = true;
-                        TXT_history.setText(history2);
+                        ShowResult = false;
                     }
                 }
             }
@@ -90,7 +97,7 @@ public class CalculatorInternalFrame extends javax.swing.JInternalFrame {
             }
         }
         
-        AddToCurrent("0");
+        Reset();
     }
 
     /**
@@ -473,11 +480,14 @@ public class CalculatorInternalFrame extends javax.swing.JInternalFrame {
         if (c == ".") {
             hasDot = true;
         }
-        if (getNewVal || ShowResult) {
-            valueOnScreen = "";
-            updateScreen();
-            getNewVal = false;
-            ShowResult = false;
+        if(valueOnScreen != "-")
+        {
+            if (getNewVal || ShowResult) {
+                valueOnScreen = "";
+                updateScreen();
+                getNewVal = false;
+                ShowResult = false;
+            }
         }
 
         valueOnScreen += c;
@@ -497,7 +507,7 @@ public class CalculatorInternalFrame extends javax.swing.JInternalFrame {
             history2 += CheckValues();
             valueOnScreen = calculate() + "";
             valueOnScreen = CheckValues();
-            currentValue = Math.PI;
+            currentValue = 0;
             updateScreen();
             ShowResult = true;
             TXT_history.setText(history2 + "=");
@@ -532,16 +542,17 @@ public class CalculatorInternalFrame extends javax.swing.JInternalFrame {
     }
 
     public void Reset() {
-        currentValue = Math.PI;
-        preValue = Math.PI;
-        history.clear();
-        valueOnScreen = "";
-        TXT_display.setText("0");
-        hasDot = false;
-        ShowResult = false;
-        history2 = "";
-        TXT_history.setText(history2);
-        getNewVal = false;
+    history = new ArrayList<String>();
+    history2 = "";
+    currentValue = 0;
+    preValue = 0;
+    valueOnScreen = "0";
+    ShowResult = false;
+    hasDot = false;
+    getNewVal = true;
+    lastOperation = "";
+    updateScreen();
+    TXT_history.setText(history2);
     }
 
     public String CheckValues() {
@@ -559,43 +570,41 @@ public class CalculatorInternalFrame extends javax.swing.JInternalFrame {
         }
     }
 
-    public double calculate() {
+    public float calculate() {
+        
+        if(!ShowResult)
+        {
+        currentValue = myParseFloat(valueOnScreen);
+        printLog("invoke calculate\n previous = " + preValue + "\nCurrentVal = " + currentValue + "\nWith operator: " + lastOperation);
+        float result;
+        switch (lastOperation) {
 
-        if (!ShowResult) {
-            currentValue = myParseFloat(valueOnScreen);
-            printLog("invoke calculate\n previous = " + preValue + "\nCurrentVal = " + currentValue + "\nWith operator: " + lastOperation);
-            double result;
-            switch (lastOperation) {
+            case "+":
+                result = preValue + currentValue;
+                break;
+            case "-":
+                result = preValue - currentValue;
+                break;
+            case "x":
+                result = preValue * currentValue;
+                break;
+            case "÷":
+                result = preValue / currentValue;
+                break;
+            default:
+                result = currentValue;
+                break;
 
-                case "+":
-                    result = preValue + currentValue;
-                    break;
-                case "-":
-                    result = preValue - currentValue;
-                    break;
-                case "x":
-                    result = preValue * currentValue;
-                    break;
-                case "÷":
-                    result = preValue / currentValue;
-                    break;
-                default:
-                    result = currentValue;
-                    break;
-
-            }
-            printLog("result = " + result);
-
-            if (preValue == Math.PI) {
-                preValue = currentValue;
-                return currentValue;
-            } else {
-                preValue = result;
-                return result;
-            }
-        } else {
-            return preValue;
         }
+        printLog("result = " + result);
+
+        {
+            preValue = result;
+            return result;
+        }
+        }
+        else
+            return preValue;
     }
 
     public Float myParseFloat(String str) {
