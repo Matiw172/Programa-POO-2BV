@@ -47,7 +47,7 @@ PlayAnim();
         sprites = parseSpriteSheet(spriteSheet, 32, 32, 6, 1, 5);
 
         
-        display.setIcon(sprites[1][0]);
+        display.setIcon(sprites[0][0]);
         
         initializeTimer();
     }

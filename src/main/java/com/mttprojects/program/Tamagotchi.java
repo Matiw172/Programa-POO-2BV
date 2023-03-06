@@ -304,9 +304,19 @@ public class Tamagotchi extends javax.swing.JInternalFrame {
             }
         }
         
+        if(!isded)
+        {
         if (bars.get(currentOption).getValue() < 25 && doTimer <= 0) {
                 options.get(currentOption).setBorder(warningSelected);
             }
+        }
+        else
+        {
+            for (int i = 0; i < bars.size(); i++) {
+            JProgressBar mybar = bars.get(i);
+            mybar.setBorder(warningBorder);
+            }
+        }
     }
 
     /**
